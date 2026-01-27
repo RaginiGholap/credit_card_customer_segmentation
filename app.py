@@ -12,7 +12,7 @@ st.title("💳 Credit Card Customer Segmentation using K-Means")
 st.write("This app segments customers based on their credit card usage behavior.")
 
 # Load saved model and scaler
-kmeans = pickle.load(open("k_means_model.pkl", "rb"))
+kmeans = pickle.load(open("kmeans_model.pkl", "rb"))
 scaler = pickle.load(open("scaler.pkl", "rb"))
 
 # File uploader
@@ -63,3 +63,4 @@ if uploaded_file is not None:
         file_name="clustered_customers.csv",
         mime="text/csv"
     )
+
