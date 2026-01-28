@@ -3,9 +3,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
-import plotly.express as px
 
 from sklearn.decomposition import PCA
+from mpl_toolkits.mplot3d import Axes3D  # needed for 3D plot
 
 st.set_page_config(page_title="Credit Card Customer Segmentation", layout="wide")
 
@@ -46,29 +46,34 @@ if uploaded_file is not None:
     pca_2d = PCA(n_components=2)
     pca_data_2d = pca_2d.fit_transform(scaled_data)
 
-    fig2d = px.scatter(
-        x=pca_data_2d[:, 0],
-        y=pca_data_2d[:, 1],
-        color=df["Cluster"].astype(str),
-        labels={"x": "PCA Component 1", "y": "PCA Component 2"},
-        title="2D PCA Cluster Visualization"
-    )
-    st.plotly_chart(fig2d, use_container_width=True)
+    fig2d, ax2d = plt.subplots()
+    ax2d.scatter(pca_data_2d[:, 0], pca_data_2d[:, 1], c=clusters)
+    ax2d.set_xlabel("PCA Component 1")
+    ax2d.set_ylabel("PCA Component 2")
+    ax2d.set_title("2D PCA Cluster Visualization")
+    st.pyplot(fig2d)
 
     # ------------------- 3D PCA -------------------
-    st.subheader("🧭 3D Customer Segments (Interactive PCA)")
+    st.subheader("🧭 3D Customer Segments (PCA)")
     pca_3d = PCA(n_components=3)
     pca_data_3d = pca_3d.fit_transform(scaled_data)
 
-    fig3d = px.scatter_3d(
-        x=pca_data_3d[:, 0],
-        y=pca_data_3d[:, 1],
-        z=pca_data_3d[:, 2],
-        color=df["Cluster"].astype(str),
-        labels={"x": "PCA 1", "y": "PCA 2", "z": "PCA 3"},
-        title="3D PCA Cluster Visualization"
+    fig3d = plt.figure()
+    ax3d = fig3d.add_subplot(111, projection='3d')
+
+    ax3d.scatter(
+        pca_data_3d[:, 0],
+        pca_data_3d[:, 1],
+        pca_data_3d[:, 2],
+        c=clusters
     )
-    st.plotly_chart(fig3d, use_container_width=True)
+
+    ax3d.set_xlabel("PCA Component 1")
+    ax3d.set_ylabel("PCA Component 2")
+    ax3d.set_zlabel("PCA Component 3")
+    ax3d.set_title("3D PCA Cluster Visualization")
+
+    st.pyplot(fig3d)
 
     # Cluster summary
     st.subheader("📋 Cluster Summary")
