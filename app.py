@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
+import plotly.express as px
 
 from sklearn.decomposition import PCA
 
@@ -40,17 +41,34 @@ if uploaded_file is not None:
     st.subheader("🔢 Clustered Data")
     st.write(df.head())
 
-    # PCA for visualization
-    st.subheader("📊 Customer Segments Visualization (PCA)")
-    pca = PCA(n_components=2)
-    pca_data = pca.fit_transform(scaled_data)
+    # ------------------- 2D PCA -------------------
+    st.subheader("📊 2D Customer Segments (PCA)")
+    pca_2d = PCA(n_components=2)
+    pca_data_2d = pca_2d.fit_transform(scaled_data)
 
-    fig, ax = plt.subplots()
-    scatter = ax.scatter(pca_data[:, 0], pca_data[:, 1], c=clusters)
-    ax.set_xlabel("PCA Component 1")
-    ax.set_ylabel("PCA Component 2")
-    ax.set_title("Customer Segments")
-    st.pyplot(fig)
+    fig2d = px.scatter(
+        x=pca_data_2d[:, 0],
+        y=pca_data_2d[:, 1],
+        color=df["Cluster"].astype(str),
+        labels={"x": "PCA Component 1", "y": "PCA Component 2"},
+        title="2D PCA Cluster Visualization"
+    )
+    st.plotly_chart(fig2d, use_container_width=True)
+
+    # ------------------- 3D PCA -------------------
+    st.subheader("🧭 3D Customer Segments (Interactive PCA)")
+    pca_3d = PCA(n_components=3)
+    pca_data_3d = pca_3d.fit_transform(scaled_data)
+
+    fig3d = px.scatter_3d(
+        x=pca_data_3d[:, 0],
+        y=pca_data_3d[:, 1],
+        z=pca_data_3d[:, 2],
+        color=df["Cluster"].astype(str),
+        labels={"x": "PCA 1", "y": "PCA 2", "z": "PCA 3"},
+        title="3D PCA Cluster Visualization"
+    )
+    st.plotly_chart(fig3d, use_container_width=True)
 
     # Cluster summary
     st.subheader("📋 Cluster Summary")
@@ -63,4 +81,3 @@ if uploaded_file is not None:
         file_name="clustered_customers.csv",
         mime="text/csv"
     )
-
